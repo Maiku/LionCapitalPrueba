@@ -3,47 +3,31 @@
 namespace App\CRM\Properties\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\CRM\Properties\Request\AvailablePropertiesRequest;
+use App\CRM\Properties\Resources\AvailablePropertyResource;
+use App\CRM\Properties\Services\AvailablePropertiesIndex;
 
 class AvailablePropertiesController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Listado de propiedades disponibles para operar
      */
-    public function index()
+    public function index(AvailablePropertiesRequest $request, AvailablePropertiesIndex $service)
     {
-        //
-    }
+        $paginator = $service->handle($request); // LengthAwarePaginator
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $data = AvailablePropertyResource::collection(
+            collect($paginator->items())
+        );
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return response()->json([
+            'data' => $data,
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'per_page'     => $paginator->perPage(),
+                'total'        => $paginator->total(),
+                'last_page'    => $paginator->lastPage(),
+            ],
+        ]);
     }
 }

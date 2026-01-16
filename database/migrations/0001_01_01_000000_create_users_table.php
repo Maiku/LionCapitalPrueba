@@ -17,6 +17,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // Rol del usuario (admin, manager, agent, etc.)
+            $table->string('role', 50)->default('agent');
+
+            // Oficina asignada (obligatoria a nivel de dominio a nivel de negocio)
+            // No ponemos la FK aquí para evitar problemas de orden de migraciones; se gestiona a nivel de aplicación.
+            $table->foreignId('office_id')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });

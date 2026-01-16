@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Utils\TableGetColumn;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,8 +11,15 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    /** @use HasFactory<\\Database\\Factories\\UserFactory> */
+    use HasFactory, Notifiable, HasApiTokens, TableGetColumn;
+    const TABLE_DB = 'users';
+
+    // Roles disponibles
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_GOD = 'god';
+    public const ROLE_COMMERCIAL_DIRECTOR = 'commercial_director';
+    public const ROLE_AGENT = 'agent';
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +30,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'office_id',
     ];
 
     /**
@@ -45,5 +55,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Relaciones
+    public function office()
+    {
+        return $this->belongsTo(\App\Models\Catalogs\Office::class, 'office_id');
     }
 }
